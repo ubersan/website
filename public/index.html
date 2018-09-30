@@ -7345,28 +7345,32 @@ var elm$core$Basics$negate = function (n) {
 	return -n;
 };
 var elm_explorations$linear_algebra$Math$Vector3$vec3 = _MJS_v3;
-var elm_explorations$webgl$WebGL$Mesh3 = F2(
-	function (a, b) {
-		return {$: 2, a: a, b: b};
+var elm_explorations$webgl$WebGL$MeshIndexed3 = F3(
+	function (a, b, c) {
+		return {$: 3, a: a, b: b, c: c};
 	});
-var elm_explorations$webgl$WebGL$triangles = elm_explorations$webgl$WebGL$Mesh3(
-	{k: 3, l: 0, n: 4});
-var author$project$Main$mesh = elm_explorations$webgl$WebGL$triangles(
+var elm_explorations$webgl$WebGL$indexedTriangles = elm_explorations$webgl$WebGL$MeshIndexed3(
+	{k: 1, l: 3, n: 4});
+var author$project$Main$mesh = A2(
+	elm_explorations$webgl$WebGL$indexedTriangles,
 	_List_fromArray(
 		[
-			_Utils_Tuple3(
 			A2(
-				author$project$Main$Vertex,
-				A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 0, 0, 0),
-				A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 1, 0, 0)),
+			author$project$Main$Vertex,
+			A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 0, 0, 0),
+			A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 1, 0, 0)),
 			A2(
-				author$project$Main$Vertex,
-				A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 1, 1, 0),
-				A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 0, 1, 0)),
+			author$project$Main$Vertex,
+			A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 1, 1, 0),
+			A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 0, 1, 0)),
 			A2(
-				author$project$Main$Vertex,
-				A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 1, -1, 0),
-				A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 0, 0, 1)))
+			author$project$Main$Vertex,
+			A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 1, -1, 0),
+			A3(elm_explorations$linear_algebra$Math$Vector3$vec3, 0, 0, 1))
+		]),
+	_List_fromArray(
+		[
+			_Utils_Tuple3(0, 1, 2)
 		]));
 var elm$core$Basics$cos = _Basics_cos;
 var elm$core$Basics$sin = _Basics_sin;
