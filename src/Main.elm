@@ -1,9 +1,5 @@
 module Main exposing (main)
 
-{-
-   Rotating triangle, that is a "hello world" of the WebGL
--}
-
 import Browser
 import Browser.Dom exposing (getViewport)
 import Browser.Events exposing (onAnimationFrameDelta, onResize)
