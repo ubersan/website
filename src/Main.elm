@@ -3,13 +3,15 @@ module Main exposing (main)
 import Browser
 import Browser.Dom exposing (getViewport)
 import Browser.Events exposing (onAnimationFrameDelta, onResize)
-import Html exposing (Html)
+import Html exposing (Html, div, button, text)
 import Html.Attributes exposing (width, height, style)
+import Html.Events exposing (onClick)
 import WebGL exposing (Mesh, Shader)
 import Math.Matrix4 as Mat4 exposing (Mat4)
 import Math.Vector3 as Vec3 exposing (vec3, Vec3)
 import Json.Decode exposing (Value)
 import Task
+import Debug exposing (log)
 
 main : Program Value Model Msg
 main =
@@ -25,11 +27,13 @@ type alias Model =
     { screenWidth : Float
     , screenHeight : Float
     , dt : Float
+    , debug : String
     }
 
 type Msg
     = Resize Float Float
     | Tick Float
+    | ButtonClick
 
 
 init : (Model, Cmd Msg)
@@ -38,6 +42,7 @@ init =
       screenWidth = 500
     , screenHeight = 500
     , dt = 0
+    , debug = ""
     }
     , Task.perform (\{viewport} -> Resize viewport.width viewport.height) getViewport
     )
@@ -66,8 +71,26 @@ update msg model =
               }
             , Cmd.none)
 
-view : Model -> Html msg
+        ButtonClick ->
+            ( { model
+                | debug = log "ButtonClicked" "test"
+            }
+            , Cmd.none)
+
+view : Model -> Html Msg
 view model =
+    div
+    [ style "position" "absolute"
+    , style "top" "0"
+    , style "left" "0"
+    ]
+    [ renderWebGL model
+    , renderTestingButton
+    ]
+    
+
+renderWebGL : Model -> Html msg
+renderWebGL model =
     WebGL.toHtmlWith
         [ WebGL.clearColor 0.3 0.3 0.3 1
         , WebGL.alpha True
@@ -76,9 +99,7 @@ view model =
         ]
         [ width (round model.screenWidth)
         , height (round model.screenHeight)
-        , style "position" "absolute"
-        , style "top" "0"
-        , style "left" "0"
+        , style "display" "block"
         ]
         (let
             aspectRatio =
@@ -91,6 +112,18 @@ view model =
             { perspective = perspective (model.dt / 1000) aspectRatio }
         ]
         )
+
+renderTestingButton : Html Msg
+renderTestingButton =
+    div
+    [ style "position" "fixed"
+    , style "right" "10px"
+    , style "top" "10px"
+    ]
+    [ button
+      [ onClick ButtonClick ]
+      [ text "Debug" ]
+    ]
 
 
 perspective : Float -> Float -> Mat4
