@@ -12,6 +12,7 @@ import Math.Vector3 as Vec3 exposing (vec3, Vec3)
 import Task
 import Json.Decode as Decode exposing (Decoder, field, int)
 import Json.Encode as Encode
+import Http
 
 import Debug exposing (log)
 
@@ -38,6 +39,7 @@ type Msg
     | Tick Float
     | ButtonClick
     | MeshLoaded String
+    | DataFetched (Result Http.Error String)
 
 port loadedMesh : (String -> msg) -> Sub msg
 
@@ -80,14 +82,24 @@ update msg model =
             , Cmd.none)
 
         ButtonClick ->
-            ( { model
-                | debug = log "ButtonClicked" "test"
-            }
-            , Cmd.none)
+            ( model
+            , Http.send DataFetched (Http.getString "https://twostepsfrombadcode.com/data"))
 
         MeshLoaded input ->
             ( { model
                 | model = input
+            }
+            , Cmd.none)
+
+        DataFetched (Ok data) ->
+            ( { model
+                | model = data
+            } |> log "fetched new data!",
+            Cmd.none)
+
+        DataFetched (Err err) ->
+            ( { model
+                | model = log "DataFetched" "err"
             }
             , Cmd.none)
 
@@ -105,6 +117,7 @@ view model =
     [ renderWebGL model
     , renderTestingButton
     , renderModel model
+    , renderOtherButton
     ]
     
 
@@ -131,6 +144,18 @@ renderWebGL model =
             { perspective = perspective (model.dt / 1000) aspectRatio }
         ]
         )
+
+renderOtherButton : Html Msg
+renderOtherButton =
+    div
+    [ style "position" "fixed"
+    , style "right" "10px"
+    , style "top" "30px"
+    ]
+    [ button
+    [ onClick ButtonClick ]
+    [ text "Other" ]
+    ]
 
 renderTestingButton : Html Msg
 renderTestingButton =
