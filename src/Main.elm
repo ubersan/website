@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Browser.Dom exposing (getViewport)
@@ -9,11 +9,13 @@ import Html.Events exposing (onClick)
 import WebGL exposing (Mesh, Shader)
 import Math.Matrix4 as Mat4 exposing (Mat4)
 import Math.Vector3 as Vec3 exposing (vec3, Vec3)
-import Json.Decode exposing (Value)
 import Task
+import Json.Decode as Decode exposing (Decoder, field, int)
+import Json.Encode as Encode
+
 import Debug exposing (log)
 
-main : Program Value Model Msg
+main : Program Decode.Value Model Msg
 main =
     Browser.element
         { init = \_ -> init
@@ -28,12 +30,16 @@ type alias Model =
     , screenHeight : Float
     , dt : Float
     , debug : String
+    , model : String
     }
 
 type Msg
     = Resize Float Float
     | Tick Float
     | ButtonClick
+    | MeshLoaded String
+
+port loadedMesh : (String -> msg) -> Sub msg
 
 
 init : (Model, Cmd Msg)
@@ -43,6 +49,7 @@ init =
     , screenHeight = 500
     , dt = 0
     , debug = ""
+    , model = "default model"
     }
     , Task.perform (\{viewport} -> Resize viewport.width viewport.height) getViewport
     )
@@ -53,6 +60,7 @@ subscriptions model =
     Sub.batch
     [ onResize (\w h -> Resize (toFloat w) (toFloat h))
     , onAnimationFrameDelta Tick
+    , loadedMesh MeshLoaded
     ]
     
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -77,6 +85,16 @@ update msg model =
             }
             , Cmd.none)
 
+        MeshLoaded input ->
+            ( { model
+                | model = input
+            }
+            , Cmd.none)
+
+testDecoder : Decoder Int
+testDecoder =
+    field "test" int
+
 view : Model -> Html Msg
 view model =
     div
@@ -86,6 +104,7 @@ view model =
     ]
     [ renderWebGL model
     , renderTestingButton
+    , renderModel model
     ]
     
 
@@ -124,6 +143,16 @@ renderTestingButton =
       [ onClick ButtonClick ]
       [ text "Debug" ]
     ]
+
+renderModel : Model -> Html Msg
+renderModel model =
+    div
+    [ style "position" "fixed"
+    , style "left" "10px"
+    , style "top" "10px"
+    , style "color" "white"
+    ]
+    [ text model.model ]
 
 
 perspective : Float -> Float -> Mat4
