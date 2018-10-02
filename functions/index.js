@@ -10,19 +10,17 @@ app.set("view engine", "hbs");
 app.set('views', './views');
 
 app.get('/', (req, res) => {
-    fs.readFile('./meshes/suzanne.obj', (err, data) => {
-        if (err) {
-            throw err
-        };
-      });
-    /*res.render('index.hbs', {
-        title: 'My About Title Page'
-    });*/
     res.sendFile(__dirname + '/test.html');
 });
 
 app.get('/data', (req, res) => {
-    res.send('this is a test response from the backend 2');
+    fs.readFile('./meshes/cube.obj', 'utf8', (err, data) => {
+        if (err) {
+            throw err
+        }
+        res.send(data);
+      });
+    //res.send('this is a test response from the backend 3');
 })
 
 exports.app = functions.https.onRequest(app);

@@ -117,7 +117,6 @@ view model =
     [ renderWebGL model
     , renderTestingButton
     , renderModel model
-    , renderOtherButton
     ]
     
 
