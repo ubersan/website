@@ -7,12 +7,6 @@
 	</head>
 	<body>
 		<div id='elm-node'></div>
-		<script>
-			var app = Elm.Main.init({
-				node: document.getElementById('elm-node')
-			});
-
-			app.ports.loadedMesh.send('coming from js');
-		</script>
+		<script src='externals.js'></script>
 	</body>
 </html>
